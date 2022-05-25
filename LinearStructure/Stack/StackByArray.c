@@ -1,7 +1,6 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<stdbool.h>
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 // 堆栈操作：
 // Stack CreateStack(int MaxSize): 生成空堆栈，最大长度为MAXSIZE
@@ -13,12 +12,12 @@
 // 定义堆栈数据类型
 typedef int ElementType;
 typedef int Position;
-typedef struct SNode* PtrToSNode;
+typedef struct SNode *PtrToSNode;
 struct SNode
 {
-    ElementType *Data;  // 存储元素的数组
-    Position top;       // 栈顶位置
-    int MaxSize;        // 堆栈最大容量
+    ElementType *Data; // 存储元素的数组
+    Position top;      // 栈顶位置
+    int MaxSize;       // 堆栈最大容量
 };
 typedef PtrToSNode Stack;
 
@@ -27,7 +26,7 @@ Stack CreateStack()
 {
     int Size = 10;
     Stack S = (Stack)malloc(sizeof(struct SNode));
-    S->Data = (ElementType)malloc(Size*sizeof(ElementType));
+    S->Data = (ElementType)malloc(Size * sizeof(ElementType));
     S->top = -1;
     S->MaxSize = Size;
     return S;
@@ -36,13 +35,15 @@ Stack CreateStack()
 // 入栈操作
 bool isFull(Stack S)
 {
-    if(S->top == (S->MaxSize-1)) return true;
-    else return false;
+    if (S->top == (S->MaxSize - 1))
+        return true;
+    else
+        return false;
 }
 
 bool push(Stack S, ElementType X)
 {
-    if(isFull(S))
+    if (isFull(S))
     {
         printf("Stack is full, push failed.\n");
         return false;
@@ -57,14 +58,16 @@ bool push(Stack S, ElementType X)
 // 出栈操作
 bool isEmpty(Stack S)
 {
-    if(S->top == S->MaxSize-1) return true;
-    else return false;
+    if (S->top == S->MaxSize - 1)
+        return true;
+    else
+        return false;
 }
 
 #define ERROR -1
 ElementType Pop(Stack S)
 {
-    if(isEmpty(S))
+    if (isEmpty(S))
     {
         printf("Stack is empty, pop failed.\n");
         return ERROR;
@@ -78,7 +81,7 @@ ElementType Pop(Stack S)
 void printStack(Stack S)
 {
     printf("bottom to top: ");
-    for(int i=0; i<=S->top;i++)
+    for (int i = 0; i <= S->top; i++)
     {
         printf("%d  ", S->Data[i]);
     }
@@ -89,9 +92,9 @@ int main()
 {
     Stack stack = CreateStack();
     bool ret;
-    for(int i = 1;i<6;i++)
+    for (int i = 1; i < 6; i++)
     {
-        ret = push(stack, i*2+1);
+        ret = push(stack, i * 2 + 1);
     }
     printStack(stack);
     printf("stack after pop:\n");
