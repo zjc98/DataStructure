@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <math.h>
 
 // 建立堆栈
 typedef double ElementType;
@@ -75,6 +76,7 @@ void PrintStack(Stack S)
 
 #define MAXOP 100    // 操作数序列可能的最大长度
 #define INFINITY 1e9 // 代表正无穷
+#define ZERO 1.0E-10  // 代表0
 // 类型以此对应运算数、运算符、字符串结尾
 typedef enum
 {
@@ -89,8 +91,7 @@ Type GetOp(char *Expr, int *start, char *str)
     int i = 0;
 
     // 跳过表达式空格
-    while ((str[0] = Expr[(*start)++]) == ' ')
-        ;
+    while ((str[0] = Expr[(*start)++]) == ' ');
     // 此时str[0]不为空格，*start指向空格后第二个元素的位置
 
     while (str[i] != ' ' && str[i] != '\0')
@@ -101,6 +102,9 @@ Type GetOp(char *Expr, int *start, char *str)
     // 若读到结尾，则start-1，指向表达式字符串最后一位
     if (str[i] == '\0')
         *start--;
+
+    str[i] = '\0';   // 结束一个对象的获取
+    if(i==0) return end; 
 
     // 表示对象为数字
     else if (isdigit(str[0]) || isdigit(str[1]))
@@ -121,23 +125,55 @@ ElementType PosifixExp(char* Expr)
 
     S = createStack();
     Op1 = Op2 = 0;
-    while((T = GetOp(Expr, start, str))!=end)
+    while((T = GetOp(Expr, &start, str))!=end)
     {
         if(T==num) Push(S, atof(str));
         else
         {
-            if(!isEmpty(S)) Push(S, atof(str));
+            if(!isEmpty(S)) Op2 = Pop(S);
+            else Op1 = INFINITY;
+            if(!isEmpty(S)) Op1 = Pop(S);
+            else Op2 = INFINITY;
+            switch(str[0])
+            {
+                case '+': Push(S, Op1+Op2);break;
+                case '*': Push(S, Op1*Op2);break;
+                case '-': Push(S, Op1-Op2);break;
+                case '/': 
+                    if(fabs(Op2) > ZERO) Push(S, Op1/Op2);
+                    else{
+                        printf("Illegal Calculate\n");
+                        Op2 = INFINITY;
+                    }
+                    break;
+                default:
+                    printf("Unkonw Operator: %s", str);
+                    Op2 = INFINITY;
+                    break;                  
+            }
+            if(Op2>=INFINITY) break;
         }
     }
+    if(Op2<INFINITY)
+    {
+        if(!isEmpty(S)) Op2 = Pop(S);
+        else Op2 = INFINITY;
+    }
+    free(S);
+    return Op2;
 }
 
 int main()
 {
-    int a[] = {1, 2, 3, 4};
-    int b;
-    int i = 0;
-    while ((b = a[i++]) == 1)
-        ;
-    printf("b: %d ", b);
-    printf("i: %d ", i);
+    char Expr[MAXOP];
+    ElementType f;
+
+    gets(Expr);    // 1.2 1.3 + 2 4.2 * -
+    f = PosifixExp(Expr);
+    if(f<INFINITY)
+    printf("%.4f\n", f);
+    else
+    printf("Wrong Expression.\n");
+    system("pause");
+    return 0;
 }
